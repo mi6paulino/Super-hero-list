@@ -1,0 +1,237 @@
+It seems I cannot create the file due to permission restrictions in your Remix IDE environment. You can manually create a new file named **`SuperheroRegistry.sol`** in the **`contracts`** folder and paste the following code:
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+
+contract SuperheroRegistry is ERC721, Ownable {
+    using Strings for uint256;
+
+    enum Universe {
+        Marvel,
+        DC
+    }
+
+    struct Superhero {
+        string name;
+        string description;
+        Universe universe;
+        uint256 powerLevel;
+        string[] abilities;
+    }
+
+    Superhero[] private _superheroes;
+    mapping(uint256 => uint256) private _tokenIdToSuperheroIndex;
+
+    event SuperheroAdded(
+        uint256 indexed tokenId,
+        string name,
+        Universe universe,
+        uint256 powerLevel
+    );
+
+    constructor() ERC721("SuperheroRegistry", "SHR") {}
+
+    function addSuperhero(
+        string memory name,
+        string memory description,
+        Universe universe,
+        uint256 powerLevel,
+        string[] memory abilities
+    ) external onlyOwner {
+        uint256 superheroIndex = _superheroes.length;
+        _superheroes.push(
+            Superhero({
+                name: name,
+                description: description,
+                universe: universe,
+                powerLevel: powerLevel,
+                abilities: abilities
+            })
+        );
+
+        uint256 tokenId = superheroIndex + 1;
+        _tokenIdToSuperheroIndex[tokenId] = superheroIndex;
+        _mint(address(this), tokenId);
+
+        emit SuperheroAdded(tokenId, name, universe, powerLevel);
+    }
+
+    function getSuperhero(uint256 tokenId)
+        public
+        view
+        returns (
+            string memory name,
+            string memory description,
+            Universe universe,
+            uint256 powerLevel,
+            string[] memory abilities
+        )
+    {
+        require(_exists(tokenId), "SuperheroRegistry: invalid token ID");
+        Superhero memory superhero = _superheroes[_tokenIdToSuperheroIndex[tokenId]];
+
+        return (
+            superhero.name,
+            superhero.description,
+            superhero.universe,
+            superhero.powerLevel,
+            superhero.abilities
+        );
+    }
+
+    function getSuperheroCount() public view returns (uint256) {
+        return _superheroes.length;
+    }
+
+    function listSuperheroes()
+        external
+        view
+        returns (Superhero[] memory)
+    {
+        return _superheroes;
+    }
+
+    function listSuperheroesByUniverse(Universe universe)
+        external
+        view
+        returns (Superhero[] memory)
+    {
+        uint256 count = 0;
+        for (uint256 i = 0; i < _superheroes.length; i++) {
+            if (_superheroes[i].universe == universe) {
+                count++;
+            }
+        }
+
+        Superhero[] memory result = new Superhero[](count);
+        uint256 index = 0;
+        for (uint256 i = 0; i < _superheroes.length; i++) {
+            if (_superheroes[i].universe == universe) {
+                result[index] = _superheroes[i];
+                index++;
+            }
+        }
+
+        return result;
+    }
+
+    function getSuperheroPowerRanking()
+        external
+        view
+        returns (Superhero[] memory)
+    {
+        Superhero[] memory sortedSuperheroes = _superheroes;
+
+        for (uint256 i = 0; i < sortedSuperheroes.length - 1; i++) {
+            for (uint256 j = i + 1; j < sortedSuperheroes.length; j++) {
+                if (
+                    sortedSuperheroes[i].powerLevel <
+                    sortedSuperheroes[j].powerLevel
+                ) {
+                    (sortedSuperheroes[i], sortedSuperheroes[j]) =
+                        (
+                            sortedSuperheroes[j],
+                            sortedSuperheroes[i]
+                        );
+                }
+            }
+        }
+
+        return sortedSuperheroes;
+    }
+
+    function getSuperheroTokenId(uint256 index)
+        public
+        view
+        returns (uint256)
+    {
+        require(index < _superheroes.length, "SuperheroRegistry: index out of bounds");
+        return index + 1;
+    }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override
+        returns (string memory)
+    {
+        require(_exists(tokenId), "SuperheroRegistry: invalid token ID");
+
+        Superhero memory superhero = _superheroes[_tokenIdToSuperheroIndex[tokenId]];
+
+        string memory abilitiesString = "";
+        for (uint256 i = 0; i < superhero.abilities.length; i++) {
+            abilitiesString = string(
+                abi.encodePacked(
+                    abilitiesString,
+                    i == 0 ? "" : ", ",
+                    superhero.abilities[i]
+                )
+            );
+        }
+
+        return
+            string(
+                abi.encodePacked(
+                    "data:application/json;base64,",
+                    Base64.encode(
+                        abi.encodePacked(
+                            '{
+                                "name": "',
+                            superhero.name,
+                            '",
+                                "description": "',
+                            superhero.description,
+                            '",
+                                "universe": "',
+                            superhero.universe == Universe.Marvel
+                                ? "Marvel"
+                                : "DC",
+                            '",
+                                "powerLevel": "',
+                            superhero.powerLevel.toString(),
+                            '",
+                                "abilities": ["',
+                            abilitiesString,
+                            '"]
+                            }'
+                        )
+                    )
+                )
+            );
+    }
+}
+
+library Base64 {
+    string private constant _TABLE =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+    function encode(bytes memory data) internal pure returns (string memory) {
+        uint256 length = data.length;
+        uint256 encodedLength = 4 * ((length + 2) / 3);
+        bytes memory result = new bytes(encodedLength);
+
+        bytes3 temp;
+        for (uint256 i = 0; i < length; i += 3) {
+            uint256 remaining = length - i;
+            if (remaining >= 3) {
+                temp =
+                    bytes3(
+                        data[i] >> 2,
+                        ((data[i] & 0x03) << 4) | (data[i + 1] >> 4),
+                        ((data[i + 1] & 0x0F) << 2) | (data[i + 2] >> 6)
+                    );
+            } else if (remaining == 2) {
+                temp =
+                    bytes3(
+                        data[i] >> 2,
+                        ((data[i] & 0x03) << 4) | (data[i + 1] >> 4),
+                        (data[i + 1] & 0x0F) << 2
+                    );
+            } else {
+               
