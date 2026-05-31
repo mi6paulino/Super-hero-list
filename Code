@@ -1,0 +1,33 @@
+EIP-712 is a standard for **hashing and signing typed structured data** in Ethereum, enabling human-readable message signing (e.g., for off-chain approvals like `permit` in ERC-20 tokens). It prevents phishing attacks by showing users what they’re signing in a structured format (e.g., "Approve 100 tokens to Uniswap") instead of raw hex.
+
+### Key Components in Your `MyToken` Contract:
+1. **Domain Separator** (`DOMAIN_SEPARATOR`):
+   - Unique to your contract (includes `name`, `version`, `chainId`, and contract address).
+   - Prevents replay attacks across chains or contracts.
+
+2. **`eip712Domain()`**:
+   - Returns the domain fields used for signing (e.g., `name`, `version`).
+
+3. **`permit()`**:
+   - Allows gasless approvals via signed messages (EIP-2612).
+   - Uses `_hashTypedDataV4` (from OpenZeppelin’s `EIP712`) to compute the digest.
+
+4. **Nonces**:
+   - Each `permit` call increments the signer’s nonce to prevent replay attacks.
+
+### Example Workflow:
+1. **Frontend**:
+   - Constructs typed data (e.g., `Permit` struct) and hashes it using `ethers.js`/`web3.js`.
+   - User signs the hash with their wallet (e.g., MetaMask’s `eth_signTypedDataV4`).
+
+2. **Contract**:
+   - Verifies the signature in `permit()` using `ecrecover` and updates allowances.
+
+### Superhero Analogy:
+- **Domain Separator**: Like a superhero’s unique emblem (e.g., Superman’s "S" or Batman’s bat-symbol) — ensures the signature is only valid for *this* contract.
+- **Typed Data**: The "contract" the hero signs (e.g., "I, Iron Man, approve Black Widow to use 100 repulsor blasts").
+- **Nonce**: A one-time-use mission code (e.g., "Avengers-42") to prevent replay attacks.
+
+### Security Note:
+- Always validate the `chainId` and contract address in the domain separator to prevent cross-chain replays.
+- Use OpenZeppelin’s `EIP712` for safe implementation (as your contract does).
