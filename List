@@ -1,0 +1,104 @@
+CSS files { /* Color Themes */ --marvel-primary: #e62429; --marvel-secondary: #1560bd; --dc-primary: #006dc4; --dc-secondary: #ffd100; --text-light: #f8f9fa; --text-dark: #212529; --shadow: 0 4px 6px rgba(0, 0, 0, 0.1); --transition: all 0.3s ease; --border-radius: 8px;
+
+/* Superhero-Specific Colors */ --ironman: linear-gradient(135deg, #ff2a2a, #c61e1e); --spiderman: linear-gradient(135deg, #e62429, #ef3939); --thor: linear-gradient(135deg, #2a2a72, #000000); --superman: linear-gradient(135deg, #006dc4, #00478f); --batman: linear-gradient(135deg, #333333, #000000); --wonderwoman: linear-gradient(135deg, #c61e1e, #8b0000); }
+
+body { font-family: 'Segoe UI', 'Oxygen', 'Ubuntu', sans-serif; background-color: #f5f5f5; color: var(--text-dark); line-height: 1.6; padding: 20px; margin: 0; }
+
+.container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+
+header { text-align: center; margin-bottom: 30px; }
+
+header h1 { font-size: 2.5rem; color: var(--text-dark); margin-bottom: 10px; }
+
+header p { font-size: 1.1rem; color: #6c757d; }
+
+/* Universe Toggle */ .universe-toggle { display: flex; justify-content: center; margin-bottom: 30px; gap: 10px; }
+
+.universe-toggle button { padding: 10px 20px; border: none; border-radius: var(--border-radius); cursor: pointer; font-weight: bold; transition: var(--transition); box-shadow: var(--shadow); }
+
+.universe-toggle button.active { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); }
+
+.universe-toggle button.marvel { background: var(--marvel-primary); color: var(--text-light); }
+
+.universe-toggle button.dc { background: var(--dc-primary); color: var(--text-light); }
+
+/* Search and Filters */ .search-filter { display: flex; justify-content: space-between; margin-bottom: 30px; gap: 20px; }
+
+.search-box { flex: 1; padding: 12px; border: 1px solid #ced4da; border-radius: var(--border-radius); font-size: 1rem; transition: var(--transition); }
+
+.search-box:focus { border-color: var(--marvel-primary); box-shadow: 0 0 0 3px rgba(230, 36, 41, 0.1); outline: none; }
+
+.filter-select { padding: 12px; border: 1px solid #ced4da; border-radius: var(--border-radius); font-size: 1rem; background-color: white; cursor: pointer; transition: var(--transition); }
+
+.filter-select:focus { border-color: var(--dc-primary); box-shadow: 0 0 0 3px rgba(0, 109, 196, 0.1); outline: none; }
+
+/* Superhero Grid */ .superhero-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; margin-bottom: 40px; }
+
+.superhero-card { background-color: white; border-radius: var(--border-radius); overflow: hidden; box-shadow: var(--shadow); transition: var(--transition); position: relative; display: flex; flex-direction: column; }
+
+.superhero-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); }
+
+.superhero-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 8px; border-radius: var(--border-radius) var(--border-radius) 0 0; }
+
+.superhero-card.ironman::before { background: var(--ironman); }
+
+.superhero-card.spiderman::before { background: var(--spiderman); }
+
+.superhero-card.thor::before { background: var(--thor); }
+
+.superhero-card.superman::before { background: var(--superman); }
+
+.superhero-card.batman::before { background: var(--batman); }
+
+.superhero-card.wonderwoman::before { background: var(--wonderwoman); }
+
+.superhero-image { width: 100%; height: 200px; object-fit: cover; }
+
+.superhero-info { padding: 20px; flex: 1; }
+
+.superhero-name { font-size: 1.5rem; margin-bottom: 10px; color: var(--text-dark); }
+
+.superhero-universe { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; color: white; }
+
+.superhero-universe.marvel { background-color: var(--marvel-primary); }
+
+.superhero-universe.dc { background-color: var(--dc-primary); }
+
+.superhero-description { margin-bottom: 15px; font-size: 0.95rem; color: #495057; }
+
+.superhero-powers { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+
+.superhero-power { background-color: #e9ecef; padding: 4px 8px; border-radius: 20px; font-size: 0.8rem; }
+
+.superhero-stats { display: flex; justify-content: space-between; margin-top: auto; padding-top: 15px; border-top: 1px solid #eee; }
+
+.superhero-power-level { font-weight: bold; color: var(--marvel-primary); }
+
+.superhero-power-level.dc { color: var(--dc-primary); }
+
+/* Power Ranking List */ .power-ranking { list-style: none; padding: 0; margin: 0; }
+
+.power-ranking li { background-color: white; margin-bottom: 10px; padding: 15px 20px; border-radius: var(--border-radius); box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; transition: var(--transition); }
+
+.power-ranking li:hover { transform: translateX(5px); }
+
+.power-ranking li::before { content: counter(ranking); counter-increment: ranking; background-color: var(--dc-secondary); color: var(--text-dark); font-weight: bold; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; font-size: 0.9rem; }
+
+.power-ranking li:nth-child(1)::before { background-color: gold; color: var(--text-dark); }
+
+.power-ranking li:nth-child(2)::before { background-color: silver; color: var(--text-dark); }
+
+.power-ranking li:nth-child(3)::before { background-color: #cd7f32; color: var(--text-dark); }
+
+.power-ranking li .superhero-name { margin: 0; font-size: 1.1rem; }
+
+.power-ranking li .superhero-power-level { font-size: 1.2rem; font-weight: bold; }
+
+/* Responsive Design */ @media (max-width: 768px) { .superhero-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+
+.search-filter { flex-direction: column; } }
+
+@media (max-width: 480px) { .superhero-grid { grid-template-columns: 1fr; } }
+
+
+
