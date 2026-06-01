@@ -1,4 +1,4 @@
-EIP-712 is a standard for **hashing and signing typed structured data** in Ethereum, enabling human-readable message signing (e.g., for off-chain approvals like `permit` in ERC-20 tokens). It prevents phishing attacks by showing users what they’re signing in a structured format (e.g., "Approve 100 tokens to Uniswap") instead of raw hex.
+.EIP-712 is a standard for **hashing and signing typed structured data** in Ethereum, enabling human-readable message signing (e.g., for off-chain approvals like `permit` in ERC-20 tokens). It prevents phishing attacks by showing users what they’re signing in a structured format (e.g., "Approve 100 tokens to Uniswap") instead of raw hex.
 
 ### Key Components in Your `MyToken` Contract:
 1. **Domain Separator** (`DOMAIN_SEPARATOR`):
